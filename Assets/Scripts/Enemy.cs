@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour
     void Move()
     {
         transform.Translate(Vector3.down * speed * Time.deltaTime);
-        if(transform.position.y < -4)
+        if(transform.position.y < -6)
         {
             transform.position = new Vector3(Random.Range(-10f,10f),9,0);
         }
