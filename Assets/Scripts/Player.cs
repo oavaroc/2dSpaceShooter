@@ -72,36 +72,6 @@ public class Player : MonoBehaviour
                                         0);
     }
 
-    //Determine horizontal movement
-    private float MoveHorizontal()
-    {
-        switch (Input.GetAxis("Horizontal"))
-        {
-            case >0:
-                return transform.position.x > 10 ? 0 : Input.GetAxis("Horizontal");
-            case < 0:
-                return transform.position.x < -10 ? 0 : Input.GetAxis("Horizontal");
-            case 0:
-            default:
-                return 0;
-        }
-    }
-
-    //Determine vertical movement
-    private float MoveVertical()
-    {
-        switch (Input.GetAxis("Vertical"))
-        {
-            case >0:
-                return Input.GetAxis("Vertical");
-                //return transform.position.y > 2 ? 0 : Input.GetAxis("Vertical");
-            case <0:
-                //return transform.position.y < -4 ? 0 : Input.GetAxis("Vertical");
-            case 0:
-            default:
-                return 0;
-        }
-    }
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy"))
