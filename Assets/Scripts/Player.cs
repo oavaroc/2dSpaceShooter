@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -17,11 +18,24 @@ public class Player : MonoBehaviour
     [SerializeField]
     private GameObject _laserSpawnPos;
 
+    [SerializeField]
+    private int lives = 3;
+    private UIManager uIManager;
+
+
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
-
+        uIManager = GameObject.Find("UI").GetComponent<UIManager>();
+        if(uIManager == null)
+        {
+            Debug.Log("Cannot find the UIManager component");
+        }
+        else
+        {
+            uIManager.UpdateLives(lives);
+        }
     }
 
     // Update is called once per frame
@@ -29,6 +43,7 @@ public class Player : MonoBehaviour
     {
         Move();
         Shoot();
+        
     }
 
     private void Shoot()
@@ -77,6 +92,25 @@ public class Player : MonoBehaviour
             case 0:
             default:
                 return 0;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Enemy"))
+        {
+            Debug.Log("Player hit by: " + other.transform.name);
+            Destroy(other.gameObject);
+            Damage();
+        }
+    }
+
+    private void Damage()
+    {
+        uIManager.UpdateLives(--lives);
+        if(lives <= 0)
+        {
+            Destroy(this.gameObject);
         }
     }
 }
