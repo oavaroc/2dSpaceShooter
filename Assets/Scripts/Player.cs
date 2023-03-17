@@ -102,8 +102,7 @@ public class Player : MonoBehaviour
                 return 0;
         }
     }
-
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Enemy"))
         {
@@ -111,6 +110,7 @@ public class Player : MonoBehaviour
             Destroy(other.gameObject);
             Damage();
         }
+        
     }
 
     private void Damage()
