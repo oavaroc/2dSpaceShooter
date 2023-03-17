@@ -21,12 +21,14 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int lives = 3;
     private UIManager uIManager;
+    private SpawnManager spawnManager;
 
 
     // Start is called before the first frame update
     void Start()
     {
         transform.position = new Vector3(0, 0, 0);
+
         uIManager = GameObject.Find("UI").GetComponent<UIManager>();
         if(uIManager == null)
         {
@@ -35,6 +37,12 @@ public class Player : MonoBehaviour
         else
         {
             uIManager.UpdateLives(lives);
+        }
+
+        spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        if (spawnManager == null)
+        {
+            Debug.Log("Cannot find the SpawnManager component");
         }
     }
 
@@ -110,6 +118,7 @@ public class Player : MonoBehaviour
         uIManager.UpdateLives(--lives);
         if(lives <= 0)
         {
+            spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
     }
