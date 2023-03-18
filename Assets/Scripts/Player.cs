@@ -5,10 +5,11 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 5f;
+    private float _speed = 5f;
+
     [SerializeField]
-    private float shootCoolDown = 0.1f;
-    private float lastShot = 0f;
+    private float _shootCoolDown = 0.1f;
+    private float _lastShot = 0f;
 
     [SerializeField]
     private GameObject _laserParent;
@@ -18,9 +19,9 @@ public class Player : MonoBehaviour
     private GameObject _laserSpawnPos;
 
     [SerializeField]
-    private int lives = 3;
-    private UIManager uIManager;
-    private SpawnManager spawnManager;
+    private int _lives = 3;
+    private UIManager _uIManager;
+    private SpawnManager _spawnManager;
 
 
     // Start is called before the first frame update
@@ -28,18 +29,18 @@ public class Player : MonoBehaviour
     {
         transform.position = new Vector3(0, 0, 0);
 
-        uIManager = GameObject.Find("UI").GetComponent<UIManager>();
-        if(uIManager == null)
+        _uIManager = GameObject.Find("UI").GetComponent<UIManager>();
+        if(_uIManager == null)
         {
             Debug.Log("Cannot find the UIManager component");
         }
         else
         {
-            uIManager.UpdateLives(lives);
+            _uIManager.UpdateLives(_lives);
         }
 
-        spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
-        if (spawnManager == null)
+        _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
+        if (_spawnManager == null)
         {
             Debug.Log("Cannot find the SpawnManager component");
         }
@@ -55,17 +56,17 @@ public class Player : MonoBehaviour
 
     private void Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > lastShot+shootCoolDown)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _lastShot+_shootCoolDown)
         {
             Instantiate(_laser, _laserSpawnPos.transform.position, Quaternion.identity, _laserParent.transform);
-            lastShot = Time.time;
+            _lastShot = Time.time;
         }
     }
 
     //Move the player
     private void Move()
     {
-        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"),0) * speed * Time.deltaTime);
+        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"),0) * _speed * Time.deltaTime);
         transform.position = new Vector3(Mathf.Abs(transform.position.x) > 10 ? transform.position.x * -1 : transform.position.x , 
                                         Mathf.Clamp(transform.position.y, -4, 2), 
                                         0);
@@ -84,10 +85,10 @@ public class Player : MonoBehaviour
 
     private void Damage()
     {
-        uIManager.UpdateLives(--lives);
-        if(lives <= 0)
+        _uIManager.UpdateLives(--_lives);
+        if(_lives <= 0)
         {
-            spawnManager.StopSpawning();
+            _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
     }

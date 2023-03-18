@@ -5,13 +5,13 @@ using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
-    private Text livesText;
+    private Text _livesText;
 
     // Start is called before the first frame update
     void Start()
     {
-        livesText = GameObject.Find("Lives").GetComponent<Text>();
-        if (livesText == null)
+        _livesText = GameObject.Find("Lives").GetComponent<Text>();
+        if (_livesText == null)
         {
             Debug.Log("Cannot find Lives Text component!");
         }
@@ -19,6 +19,6 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLives(int life)
     {
-        livesText.text = "Lives: "+life;
+        _livesText.text = "Lives: "+life;
     }
 }

@@ -5,15 +5,15 @@ using UnityEngine;
 public class SpawnManager : MonoBehaviour
 {
     [SerializeField]
-    private float spawnRate = 5f;
+    private float _spawnRate = 5f;
 
     [SerializeField]
     private GameObject _enemy;
     [SerializeField]
-    private GameObject enemyParent;
+    private GameObject _enemyParent;
 
     [SerializeField]
-    private bool keepSpawning=true;
+    private bool _keepSpawning=true;
 
     // Start is called before the first frame update
     void Start()
@@ -23,16 +23,16 @@ public class SpawnManager : MonoBehaviour
 
     IEnumerator SpawnEnemies()
     {
-        yield return new WaitForSeconds(spawnRate);
-        while (keepSpawning) { 
-            Instantiate(_enemy, new Vector3(Random.Range(-10, 10), 9, 0), Quaternion.identity, enemyParent.transform);
-            yield return new WaitForSeconds(spawnRate);
+        yield return new WaitForSeconds(_spawnRate);
+        while (_keepSpawning) { 
+            Instantiate(_enemy, new Vector3(Random.Range(-10, 10), 9, 0), Quaternion.identity, _enemyParent.transform);
+            yield return new WaitForSeconds(_spawnRate);
         }
     }
 
     public void StopSpawning()
     {
-        keepSpawning = false;
-        Destroy(enemyParent);
+        _keepSpawning = false;
+        Destroy(_enemyParent);
     }
 }

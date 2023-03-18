@@ -5,7 +5,7 @@ using UnityEngine;
 public class Enemy : MonoBehaviour
 {
     [SerializeField]
-    private float speed = 3f;
+    private float _speed = 3f;
 
     // Update is called once per frame
     void Update()
@@ -15,7 +15,7 @@ public class Enemy : MonoBehaviour
 
     void Move()
     {
-        transform.Translate(Vector3.down * speed * Time.deltaTime);
+        transform.Translate(Vector3.down * _speed * Time.deltaTime);
         if(transform.position.y < -6)
         {
             transform.position = new Vector3(Random.Range(-10f,10f),9,0);

@@ -562,12 +562,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b34da3001d46e34a860b55c13986e8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 5
-  shootCoolDown: 0.1
+  _speed: 5
+  _shootCoolDown: 0.1
   _laserParent: {fileID: 414421152}
   _laser: {fileID: 201381884119645724, guid: d69cfeb0e27e59041a15bc04a2dc60f3, type: 3}
   _laserSpawnPos: {fileID: 853124699}
-  lives: 3
+  _lives: 3
 --- !u!212 &1293745639
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -900,10 +900,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771370a3ff396464c99704dc7d7da88e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  spawnRate: 1
+  _spawnRate: 5
   _enemy: {fileID: 7481826412471201221, guid: 68f4420649d809540b05672ee7002ad7, type: 3}
-  enemyParent: {fileID: 1328856144}
-  keepSpawning: 1
+  _enemyParent: {fileID: 1328856144}
+  _keepSpawning: 1
 --- !u!4 &1783340690
 Transform:
   m_ObjectHideFlags: 0
