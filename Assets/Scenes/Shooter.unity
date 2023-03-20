@@ -531,6 +531,37 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 974406705}
   m_CullTransparentMesh: 1
+--- !u!1 &990587909
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 990587910}
+  m_Layer: 0
+  m_Name: PowerUps
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &990587910
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 990587909}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.2156427, y: 1.3637756, z: -0.06776162}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1293745637
 GameObject:
   m_ObjectHideFlags: 0
@@ -564,6 +595,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _speed: 5
   _shootCoolDown: 0.1
+  _tripleShotActive: 0
+  _tripleShot: {fileID: 7534730730048899988, guid: 187f93c49040f534e8a8e5675a529de9, type: 3}
+  _speedPowerActive: 0
+  _speedPower: {fileID: 0}
+  _shieldActive: 0
+  _shield: {fileID: 0}
   _laserParent: {fileID: 414421152}
   _laser: {fileID: 201381884119645724, guid: d69cfeb0e27e59041a15bc04a2dc60f3, type: 3}
   _laserSpawnPos: {fileID: 853124699}
@@ -900,9 +937,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 771370a3ff396464c99704dc7d7da88e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _spawnRate: 5
+  _enemySpawnRate: 5
+  _powerUpSpawnRate: 1
   _enemy: {fileID: 7481826412471201221, guid: 68f4420649d809540b05672ee7002ad7, type: 3}
   _enemyParent: {fileID: 1328856144}
+  _powerUpList:
+  - {fileID: 6425522377093212413, guid: ab6cdf7fba174574b920ef3df9bf5d8d, type: 3}
+  - {fileID: 2616896261183505639, guid: 253b94fa47d470745ade7820a10404dd, type: 3}
+  - {fileID: 638419776388720218, guid: ecd742f62fcc2534bb2ba238de905c94, type: 3}
+  _powerUpParent: {fileID: 990587909}
   _keepSpawning: 1
 --- !u!4 &1783340690
 Transform:

@@ -12,6 +12,31 @@ public class Player : MonoBehaviour
     private float _lastShot = 0f;
 
     [SerializeField]
+    private bool _tripleShotActive = false;
+    [SerializeField]
+    private bool _speedPowerActive = false;
+    [SerializeField]
+    private bool _shieldActive = false;
+
+    [SerializeField]
+    private float _tripleShotDuration = 0f;
+    [SerializeField]
+    private float _speedPowerDuration = 0f;
+    [SerializeField]
+    private float _shieldDuration = 0f;
+
+    private Coroutine _tripleShotCoroutine;
+    private Coroutine _speedPowerCoroutine;
+    private Coroutine _shieldCoroutine;
+
+    [SerializeField]
+    private GameObject _tripleShot;
+
+    [SerializeField]
+    private GameObject _playerShield;
+
+
+    [SerializeField]
     private GameObject _laserParent;
     [SerializeField]
     private GameObject _laser;
@@ -51,14 +76,14 @@ public class Player : MonoBehaviour
     {
         Move();
         Shoot();
-        
     }
 
     private void Shoot()
     {
         if (Input.GetKeyDown(KeyCode.Space) && Time.time > _lastShot+_shootCoolDown)
         {
-            Instantiate(_laser, _laserSpawnPos.transform.position, Quaternion.identity, _laserParent.transform);
+            Instantiate(_tripleShotActive ? _tripleShot : _laser, 
+                        _laserSpawnPos.transform.position, Quaternion.identity, _laserParent.transform);
             _lastShot = Time.time;
         }
     }
@@ -66,8 +91,8 @@ public class Player : MonoBehaviour
     //Move the player
     private void Move()
     {
-        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"),0) * _speed * Time.deltaTime);
-        transform.position = new Vector3(Mathf.Abs(transform.position.x) > 10 ? transform.position.x * -1 : transform.position.x , 
+        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"),0) * ( _speedPowerActive ? _speed * 2 : _speed) * Time.deltaTime);
+        transform.position = new Vector3(Mathf.Abs(transform.position.x) > 10 ? Mathf.Clamp(transform.position.x * -1, -10f, 10f) : transform.position.x , 
                                         Mathf.Clamp(transform.position.y, -4, 2), 
                                         0);
     }
@@ -78,7 +103,19 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Player hit by: " + other.transform.name);
             Destroy(other.gameObject);
-            Damage();
+            if (_shieldActive)
+            {
+                _shieldActive = false;
+                _playerShield.SetActive(false);
+                Debug.Log("Shield Used");
+                StopCoroutine(_shieldCoroutine);
+        _shieldCoroutine = null;
+            }
+            else
+            {
+                Damage();
+            }
+            
         }
         
     }
@@ -91,5 +128,94 @@ public class Player : MonoBehaviour
             _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
+    }
+    public void setPowerupEnabled(Powerup powerup)
+    {
+        Debug.Log(powerup.GetPowerUpName() + " starting");
+        switch (powerup.GetPowerUpName())
+        {
+            case "TripleShotPowerup":
+                StartTripleShot(powerup);
+                break;
+            case "SpeedPowerUp":
+                StartSpeed(powerup);
+                break;
+            case "ShieldPowerUp":
+                StartShield(powerup);
+                break;
+            default:
+                Debug.Log("Unknown powerup");
+                break;
+        }
+    }
+
+    private void StartTripleShot(Powerup powerup)
+    {
+        if (_tripleShotCoroutine == null)
+        {
+            _tripleShotCoroutine = StartCoroutine(TripleShotExpired(powerup.GetDuration()));
+        }
+        else
+        {
+            StopCoroutine(_tripleShotCoroutine);
+            _tripleShotCoroutine = StartCoroutine(TripleShotExpired(powerup.GetDuration()));
+        }
+    }
+
+    private void StartSpeed(Powerup powerup)
+    {
+        if (_speedPowerCoroutine == null)
+        {
+            _speedPowerCoroutine = StartCoroutine(SpeedExpired(powerup.GetDuration()));
+        }
+        else
+        {
+            StopCoroutine(_speedPowerCoroutine);
+            _speedPowerCoroutine = StartCoroutine(SpeedExpired(powerup.GetDuration()));
+        }
+    }
+    private void StartShield(Powerup powerup)
+    {
+        if (_shieldCoroutine == null)
+        {
+            _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
+        }
+        else
+        {
+            StopCoroutine(_shieldCoroutine);
+            _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
+        }
+    }
+
+    IEnumerator TripleShotExpired(float duration)
+    {
+        Debug.Log("Triple Shot Enabled");
+        _tripleShotActive = true;
+        yield return new WaitForSeconds(duration);
+        _tripleShotCoroutine = null;
+        _tripleShotActive = false;
+        Debug.Log("Triple Shot Disabled");
+    }
+
+    IEnumerator SpeedExpired(float duration)
+    {
+        Debug.Log("Speed Enabled");
+        _speedPowerActive = true;
+        yield return new WaitForSeconds(duration);
+        _speedPowerCoroutine = null;
+        _speedPowerActive = false;
+        Debug.Log("Speed Disabled");
+    }
+
+    IEnumerator ShieldExpired(float duration)
+    {
+        Debug.Log("Shield Enabled");
+        _shieldActive = true;
+        _playerShield.SetActive(true);
+        yield return new WaitForSeconds(duration);
+        _shieldCoroutine = null;
+        _shieldActive = false;
+        _playerShield.SetActive(false);
+        Debug.Log("Shield Disabled");
     }
 }
