@@ -18,13 +18,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     private bool _shieldActive = false;
 
-    [SerializeField]
-    private float _tripleShotDuration = 0f;
-    [SerializeField]
-    private float _speedPowerDuration = 0f;
-    [SerializeField]
-    private float _shieldDuration = 0f;
-
     private Coroutine _tripleShotCoroutine;
     private Coroutine _speedPowerCoroutine;
     private Coroutine _shieldCoroutine;
@@ -48,6 +41,10 @@ public class Player : MonoBehaviour
     private UIManager _uIManager;
     private SpawnManager _spawnManager;
 
+    private int _score = 0;
+
+    [SerializeField]
+    private List<GameObject> _playerHurt;
 
     // Start is called before the first frame update
     void Start()
@@ -62,6 +59,7 @@ public class Player : MonoBehaviour
         else
         {
             _uIManager.UpdateLives(_lives);
+            _uIManager.UpdateScore(_score);
         }
 
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -77,6 +75,7 @@ public class Player : MonoBehaviour
         Move();
         Shoot();
     }
+
 
     private void Shoot()
     {
@@ -102,14 +101,14 @@ public class Player : MonoBehaviour
         if (other.CompareTag("Enemy"))
         {
             Debug.Log("Player hit by: " + other.transform.name);
-            Destroy(other.gameObject);
+            other.GetComponent<Enemy>().DestroyEnemy();
             if (_shieldActive)
             {
                 _shieldActive = false;
                 _playerShield.SetActive(false);
                 Debug.Log("Shield Used");
                 StopCoroutine(_shieldCoroutine);
-        _shieldCoroutine = null;
+                _shieldCoroutine = null;
             }
             else
             {
@@ -123,7 +122,10 @@ public class Player : MonoBehaviour
     private void Damage()
     {
         _uIManager.UpdateLives(--_lives);
-        if(_lives <= 0)
+        _playerHurt.FindAll(hurt => !hurt.gameObject.activeInHierarchy)
+            [Random.Range(0, _playerHurt.FindAll(hurt => !hurt.gameObject.activeInHierarchy).Count)].SetActive(true);
+
+        if (_lives <= 0)
         {
             _spawnManager.StopSpawning();
             Destroy(this.gameObject);
@@ -185,6 +187,12 @@ public class Player : MonoBehaviour
             StopCoroutine(_shieldCoroutine);
             _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
         }
+    }
+
+    public void addScore(int score)
+    {
+        _score += score;
+        _uIManager.UpdateScore(_score);
     }
 
     IEnumerator TripleShotExpired(float duration)

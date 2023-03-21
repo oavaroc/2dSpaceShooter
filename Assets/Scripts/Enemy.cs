@@ -7,9 +7,25 @@ public class Enemy : MonoBehaviour
     [SerializeField]
     private float _speed = 3f;
 
+    [SerializeField]
+    private int _scoreWorth = 1;
+    private Player _player;
+
+    private Animator _animator;
+
     void Start()
     {
+        _player = GameObject.Find("Player").GetComponent<Player>();
+        if(_player == null)
+        {
+            Debug.Log("Enemy unable to find player!");
+        }
 
+        _animator = GetComponent<Animator>();
+        if (_animator == null)
+        {
+            Debug.Log("Enemy unable to find animator!");
+        }
     }
 
     // Update is called once per frame
@@ -31,10 +47,19 @@ public class Enemy : MonoBehaviour
     {
         if (other.CompareTag("Laser"))
         {
+
             Debug.Log("Enemy hit by: " + other.transform.name);
+            _player.addScore(_scoreWorth);
             Destroy(other.gameObject);
-            Destroy(this.gameObject);
+            DestroyEnemy();
         }
     }
 
+    public void DestroyEnemy()
+    {
+        _animator.SetTrigger("Dead");
+        gameObject.GetComponent<BoxCollider2D>().enabled = false;
+        _speed = 0f;
+        Destroy(this.gameObject, 2.38f);
+    }
 }
