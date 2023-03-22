@@ -41,6 +41,10 @@ public class UIManager : MonoBehaviour
         {
             Restart();
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            Application.Quit();
+        }
     }
 
     private void Restart()

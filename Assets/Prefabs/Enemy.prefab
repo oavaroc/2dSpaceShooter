@@ -32,7 +32,8 @@ Transform:
   m_LocalPosition: {x: -0.030181713, y: 2.51, z: 0.071153514}
   m_LocalScale: {x: 0.8, y: 0.8, z: 0.8}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 3266606751271012410}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -48,8 +49,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2a2cfc53b1cea4f4fa41aa66ef34f971, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _speed: 3
+  _speed: 4
   _scoreWorth: 5
+  _explosionSound: {fileID: 0}
+  _laserSound: {fileID: 0}
+  _laser: {fileID: 201381884119645724, guid: b3b376b53cfe8d942b2fd3f596382a3e, type: 3}
+  _keepFiring: 1
+  _laserSpawnPoint: {fileID: 8853766795766965293}
 --- !u!212 &2848035697686285839
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -169,3 +175,34 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!1 &8853766795766965293
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3266606751271012410}
+  m_Layer: 0
+  m_Name: LaserSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3266606751271012410
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8853766795766965293}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: -1.45, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 7415594841730827894}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
