@@ -14,8 +14,8 @@ GameObject:
   - component: {fileID: 2577823788713674113}
   - component: {fileID: 4826480631434673350}
   m_Layer: 0
-  m_Name: Laser_2D
-  m_TagString: Laser
+  m_Name: Laser_2D_Enemy
+  m_TagString: EnemyLaser
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -77,7 +77,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b030d335857201646be69703e678d6e5, type: 3}
-  m_Color: {r: 0, g: 0.12316942, b: 1, a: 1}
+  m_Color: {r: 0.9932481, g: 1, b: 0, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

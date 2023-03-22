@@ -124,25 +124,35 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
+        Debug.Log("Player hit by: " + other.transform.name);
         if (other.CompareTag("Enemy"))
         {
-            Debug.Log("Player hit by: " + other.transform.name);
             other.GetComponent<Enemy>().DestroyEnemy();
-            if (_shieldActive)
-            {
-                _shieldActive = false;
-                _playerShield.SetActive(false);
-                Debug.Log("Shield Used");
-                StopCoroutine(_shieldCoroutine);
-                _shieldCoroutine = null;
-            }
-            else
-            {
-                Damage();
-            }
-            
+            CalculateDamage();
+        }
+        else if (other.CompareTag("EnemyLaser"))
+        {
+            Destroy(other.gameObject);
+            CalculateDamage();
         }
         
+    }
+
+    private void CalculateDamage()
+    {
+        if (_shieldActive)
+        {
+            _shieldActive = false;
+            _playerShield.SetActive(false);
+            Debug.Log("Shield Used");
+            StopCoroutine(_shieldCoroutine);
+            _shieldCoroutine = null;
+        }
+        else
+        {
+            Damage();
+        }
+
     }
 
     private void Damage()
