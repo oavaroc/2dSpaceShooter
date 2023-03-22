@@ -59,11 +59,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateLives(int life)
     {
-        _livesDisplay.texture = _livesRemaining[life];
+
         if(life <= 0)
         {
             StartCoroutine(Flicker());
             _restartText.gameObject.SetActive(true);
+            _livesDisplay.texture = _livesRemaining[Mathf.Clamp(life,0,3)];
         }
     }
 

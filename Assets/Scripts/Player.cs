@@ -177,55 +177,27 @@ public class Player : MonoBehaviour
         switch (powerup.GetPowerUpName())
         {
             case "TripleShotPowerup":
-                StartTripleShot(powerup);
+                CheckCoroutine(_tripleShotCoroutine);
+                _tripleShotCoroutine = StartCoroutine(TripleShotExpired(powerup.GetDuration()));
                 break;
             case "SpeedPowerUp":
-                StartSpeed(powerup);
+                CheckCoroutine(_speedPowerCoroutine);
+                _speedPowerCoroutine = StartCoroutine(SpeedExpired(powerup.GetDuration()));
                 break;
             case "ShieldPowerUp":
-                StartShield(powerup);
+                CheckCoroutine(_shieldCoroutine);
+                _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
                 break;
             default:
                 Debug.Log("Unknown powerup");
                 break;
         }
     }
-
-    private void StartTripleShot(Powerup powerup)
+    private void CheckCoroutine(Coroutine coroutine)
     {
-        if (_tripleShotCoroutine == null)
+        if (coroutine != null)
         {
-            _tripleShotCoroutine = StartCoroutine(TripleShotExpired(powerup.GetDuration()));
-        }
-        else
-        {
-            StopCoroutine(_tripleShotCoroutine);
-            _tripleShotCoroutine = StartCoroutine(TripleShotExpired(powerup.GetDuration()));
-        }
-    }
-
-    private void StartSpeed(Powerup powerup)
-    {
-        if (_speedPowerCoroutine == null)
-        {
-            _speedPowerCoroutine = StartCoroutine(SpeedExpired(powerup.GetDuration()));
-        }
-        else
-        {
-            StopCoroutine(_speedPowerCoroutine);
-            _speedPowerCoroutine = StartCoroutine(SpeedExpired(powerup.GetDuration()));
-        }
-    }
-    private void StartShield(Powerup powerup)
-    {
-        if (_shieldCoroutine == null)
-        {
-            _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
-        }
-        else
-        {
-            StopCoroutine(_shieldCoroutine);
-            _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
+            StopCoroutine(coroutine);
         }
     }
 
