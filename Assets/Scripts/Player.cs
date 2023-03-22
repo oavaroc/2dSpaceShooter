@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+
     [SerializeField]
     private float _speed = 5f;
 
@@ -164,7 +165,7 @@ public class Player : MonoBehaviour
         if (_lives <= 0)
         {
             _explosionSound.Play();
-            Instantiate(_explosion, transform.position, Quaternion.identity);
+            Destroy(Instantiate(_explosion, transform.position, Quaternion.identity),3f);
             _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }

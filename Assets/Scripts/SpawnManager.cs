@@ -22,10 +22,6 @@ public class SpawnManager : MonoBehaviour
     [SerializeField]
     private bool _keepSpawning=true;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-    }
 
     public void StartSpawning()
     {
