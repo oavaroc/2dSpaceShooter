@@ -55,7 +55,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("Cannot find the LaserSound component");
         }
-        StartCoroutine(fireLaser());
+        StartCoroutine(FireLaser());
     }
 
     // Update is called once per frame
@@ -78,7 +78,7 @@ public class Enemy : MonoBehaviour
         if (other.CompareTag("Laser"))
         {
             Debug.Log("Enemy hit by: " + other.transform.name);
-            _player.addScore(_scoreWorth);
+            _player.AddScore(_scoreWorth);
             Destroy(other.gameObject);
             DestroyEnemy();
         }
@@ -94,7 +94,7 @@ public class Enemy : MonoBehaviour
         Destroy(this.gameObject, 2.38f);
     }
 
-    IEnumerator fireLaser()
+    IEnumerator FireLaser()
     {
         while (_keepFiring)
         {

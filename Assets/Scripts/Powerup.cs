@@ -35,7 +35,7 @@ public class Powerup : MonoBehaviour
         {
             if (other.GetComponent<Player>() != null)
             {
-                other.GetComponent<Player>().setPowerupEnabled(this);
+                other.GetComponent<Player>().SetPowerupEnabled(this);
                 Destroy(transform.gameObject);
             }
         }

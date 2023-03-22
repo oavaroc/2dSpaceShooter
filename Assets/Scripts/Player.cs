@@ -169,7 +169,7 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-    public void setPowerupEnabled(Powerup powerup)
+    public void SetPowerupEnabled(Powerup powerup)
     {
         _powerUpSound.Play();
         Debug.Log(powerup.GetPowerUpName() + " starting");
@@ -228,7 +228,7 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void addScore(int score)
+    public void AddScore(int score)
     {
         _score += score;
         _uIManager.UpdateScore(_score);
