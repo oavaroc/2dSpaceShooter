@@ -46,6 +46,13 @@ public class Player : MonoBehaviour
     [SerializeField]
     private List<GameObject> _playerHurt;
 
+    [SerializeField]
+    private GameObject _explosion;
+
+    private AudioSource _laserSound;
+    private AudioSource _explosionSound;
+    private AudioSource _powerUpSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -67,6 +74,24 @@ public class Player : MonoBehaviour
         {
             Debug.Log("Cannot find the SpawnManager component");
         }
+
+        _laserSound = GameObject.Find("LaserSound").GetComponent<AudioSource>();
+        if (_laserSound == null)
+        {
+            Debug.Log("Cannot find the LaserSound component");
+        }
+
+        _explosionSound = GameObject.Find("ExplosionSound").GetComponent<AudioSource>();
+        if (_explosionSound == null)
+        {
+            Debug.Log("Cannot find the ExplosionSound component");
+        }
+
+        _powerUpSound = GameObject.Find("PowerUpSound").GetComponent<AudioSource>();
+        if (_powerUpSound == null)
+        {
+            Debug.Log("Cannot find the PowerUpSound component");
+        }
     }
 
     // Update is called once per frame
@@ -83,6 +108,7 @@ public class Player : MonoBehaviour
         {
             Instantiate(_tripleShotActive ? _tripleShot : _laser, 
                         _laserSpawnPos.transform.position, Quaternion.identity, _laserParent.transform);
+            _laserSound.Play();
             _lastShot = Time.time;
         }
     }
@@ -127,12 +153,15 @@ public class Player : MonoBehaviour
 
         if (_lives <= 0)
         {
+            _explosionSound.Play();
+            Instantiate(_explosion, transform.position, Quaternion.identity);
             _spawnManager.StopSpawning();
             Destroy(this.gameObject);
         }
     }
     public void setPowerupEnabled(Powerup powerup)
     {
+        _powerUpSound.Play();
         Debug.Log(powerup.GetPowerUpName() + " starting");
         switch (powerup.GetPowerUpName())
         {

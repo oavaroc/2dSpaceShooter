@@ -11,6 +11,9 @@ public class Asteroid : MonoBehaviour
     private GameObject _explosion;
 
     private SpawnManager _spawnManager;
+
+    private AudioSource _explosionSound;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -19,7 +22,13 @@ public class Asteroid : MonoBehaviour
         {
             Debug.Log("Asteroid cannot find spawn manager!");
         }
-        
+
+
+        _explosionSound = GameObject.Find("ExplosionSound").GetComponent<AudioSource>();
+        if (_explosionSound == null)
+        {
+            Debug.Log("Cannot find the ExplosionSound component");
+        }
     }
 
     // Update is called once per frame
@@ -33,8 +42,14 @@ public class Asteroid : MonoBehaviour
         if (collision.CompareTag("Laser"))
         {
             _spawnManager.StartSpawning();
+            DestroyAsteroid();
         }
-        Destroy(Instantiate(_explosion, transform.position, Quaternion.identity),3f);
-        Destroy(gameObject,1f);
+    }
+    private void DestroyAsteroid()
+    {
+        _explosionSound.Play();
+        gameObject.GetComponent<CircleCollider2D>().enabled = false;
+        Destroy(Instantiate(_explosion, transform.position, Quaternion.identity), 3f);
+        Destroy(gameObject, 1f);
     }
 }
