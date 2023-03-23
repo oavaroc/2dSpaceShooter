@@ -17,7 +17,15 @@ public class Powerup : MonoBehaviour
 
     [SerializeField]
     private float _powerUpDuration = 5f;
-
+    private Player _player;
+    private void Start()
+    {
+        _player = GameObject.Find("Player").GetComponent<Player>();
+        if(_player == null)
+        {
+            Debug.Log("Player is null in Power up object!");
+        }
+    }
     // Update is called once per frame
     void Update()
     {
@@ -35,7 +43,25 @@ public class Powerup : MonoBehaviour
         {
             if (other.GetComponent<Player>() != null)
             {
-                other.GetComponent<Player>().SetPowerupEnabled(this);
+                switch (_powerUpName.ToString())
+                {
+                    case "TripleShotPowerup":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateTripleShotSequence(_powerUpDuration);
+                        break;
+                    case "SpeedPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateSpeedSequence(_powerUpDuration);
+                        break;
+                    case "ShieldPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateShieldSequence(_powerUpDuration);
+                        break;
+                    default:
+                        Debug.Log("Unknown powerup");
+                        break;
+                }
+
                 Destroy(transform.gameObject);
             }
         }

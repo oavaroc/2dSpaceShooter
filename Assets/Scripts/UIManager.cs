@@ -35,22 +35,6 @@ public class UIManager : MonoBehaviour
         }
 
     }
-    void Update()
-    {
-        if (_restartText.IsActive() && Input.GetKeyDown(KeyCode.R))
-        {
-            Restart();
-        }
-        if (Input.GetKeyDown(KeyCode.Escape))
-        {
-            Application.Quit();
-        }
-    }
-
-    private void Restart()
-    {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-    }
 
     public void UpdateScore(int score)
     {
@@ -64,8 +48,8 @@ public class UIManager : MonoBehaviour
         {
             StartCoroutine(Flicker());
             _restartText.gameObject.SetActive(true);
-            _livesDisplay.texture = _livesRemaining[Mathf.Clamp(life,0,3)];
         }
+        _livesDisplay.texture = _livesRemaining[Mathf.Clamp(life,0,3)];
     }
 
     IEnumerator Flicker()

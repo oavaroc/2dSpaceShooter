@@ -35,7 +35,7 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(_enemySpawnRate);
         while (_keepSpawning) { 
             Instantiate(_enemy, new Vector3(Random.Range(-10f, 10f), 9, 0), Quaternion.identity, _enemyParent.transform);
-            yield return new WaitForSeconds(Random.Range(_enemySpawnRate * 1.2f, _enemySpawnRate*0.7f));
+            yield return new WaitForSeconds(Random.Range(_enemySpawnRate*0.7f, _enemySpawnRate * 1.2f));
         }
     }
     IEnumerator SpawnPowerups()
@@ -45,7 +45,7 @@ public class SpawnManager : MonoBehaviour
         {
             Instantiate(_powerUpList[Random.Range(0,_powerUpList.Count)], new Vector3(Random.Range(-10f, 10f), 9, 0), 
                         Quaternion.identity, _powerUpParent.transform);
-            yield return new WaitForSeconds(Random.Range(_powerUpSpawnRate * 1.5f, _powerUpSpawnRate * 0.5f));
+            yield return new WaitForSeconds(Random.Range(_powerUpSpawnRate * 0.5f, _powerUpSpawnRate * 1.5f));
         }
     }
 

@@ -18,10 +18,6 @@ public class Laser : MonoBehaviour
         transform.Translate(Vector3.up * _speed * Time.deltaTime);
         if(Mathf.Abs(transform.position.y) > 7 || Mathf.Abs(transform.position.x) > 11)
         {
-            if(transform.parent.name.Contains("TripleShot"))
-            {
-                Destroy(transform.parent.gameObject);
-            }
             Destroy(gameObject);
         }
     }

@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private float _speed = 5f;
+    [SerializeField]
+    private float _thrusterSpeed = 10f;
 
     [SerializeField]
     private float _shootCoolDown = 0.1f;
@@ -18,6 +20,10 @@ public class Player : MonoBehaviour
     private bool _speedPowerActive = false;
     [SerializeField]
     private bool _shieldActive = false;
+
+    [SerializeField]
+    private int _shieldHits = 3;
+    private int _shieldHitsLeft;
 
     private Coroutine _tripleShotCoroutine;
     private Coroutine _speedPowerCoroutine;
@@ -45,7 +51,7 @@ public class Player : MonoBehaviour
     private int _score = 0;
 
     [SerializeField]
-    private List<GameObject> _playerHurt;
+    private GameObject[] _playerHurt;
 
     [SerializeField]
     private GameObject _explosion;
@@ -117,10 +123,23 @@ public class Player : MonoBehaviour
     //Move the player
     private void Move()
     {
-        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"),0) * ( _speedPowerActive ? _speed * 2 : _speed) * Time.deltaTime);
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            CalculateMovement(_thrusterSpeed);
+        }
+        else
+        {
+            CalculateMovement(_speed);
+        }    
         transform.position = new Vector3(Mathf.Abs(transform.position.x) > 10 ? Mathf.Clamp(transform.position.x * -1, -10f, 10f) : transform.position.x , 
-                                        Mathf.Clamp(transform.position.y, -4, 2), 
-                                        0);
+                                            Mathf.Clamp(transform.position.y, -4, 2), 
+                                            0);
+    }
+
+    private void CalculateMovement(float chosenSpeed)
+    {
+        transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0) 
+                                        * (_speedPowerActive ? chosenSpeed * 2 : chosenSpeed) * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -143,24 +162,42 @@ public class Player : MonoBehaviour
     {
         if (_shieldActive)
         {
-            _shieldActive = false;
-            _playerShield.SetActive(false);
-            Debug.Log("Shield Used");
-            StopCoroutine(_shieldCoroutine);
-            _shieldCoroutine = null;
+            ShieldDamage();
         }
         else
         {
             Damage();
         }
+    }
 
+    private void ShieldDamage()
+    {
+        _shieldHitsLeft--;
+        Debug.Log("Shield hit Used, remaining hits: "+ _shieldHitsLeft);
+        if(_shieldHitsLeft <=0)
+        {
+            Debug.Log("Shield gone");
+            _shieldActive = false;
+            _playerShield.SetActive(false);
+            StopCoroutine(_shieldCoroutine);
+            _shieldCoroutine = null;
+        }
+        else
+        {
+            SetShieldOpacity((float)_shieldHitsLeft/_shieldHits);
+        }
+    }
+    private void SetShieldOpacity(float opacity)
+    {
+        Color color = _playerShield.GetComponent<SpriteRenderer>().material.color;
+        color.a = opacity;
+        _playerShield.GetComponent<SpriteRenderer>().material.color = color;
     }
 
     private void Damage()
     {
         _uIManager.UpdateLives(--_lives);
-        _playerHurt.FindAll(hurt => !hurt.gameObject.activeInHierarchy)
-            [Random.Range(0, _playerHurt.FindAll(hurt => !hurt.gameObject.activeInHierarchy).Count)].SetActive(true);
+        ApplyVisualDamage();
 
         if (_lives <= 0)
         {
@@ -170,29 +207,33 @@ public class Player : MonoBehaviour
             Destroy(this.gameObject);
         }
     }
-    public void SetPowerupEnabled(Powerup powerup)
+
+    private void ApplyVisualDamage()
     {
-        _powerUpSound.Play();
-        Debug.Log(powerup.GetPowerUpName() + " starting");
-        switch (powerup.GetPowerUpName())
+        int i = Random.Range(0, _playerHurt.Length);
+        while (_playerHurt[i].activeInHierarchy)
         {
-            case "TripleShotPowerup":
-                CheckCoroutine(_tripleShotCoroutine);
-                _tripleShotCoroutine = StartCoroutine(TripleShotExpired(powerup.GetDuration()));
-                break;
-            case "SpeedPowerUp":
-                CheckCoroutine(_speedPowerCoroutine);
-                _speedPowerCoroutine = StartCoroutine(SpeedExpired(powerup.GetDuration()));
-                break;
-            case "ShieldPowerUp":
-                CheckCoroutine(_shieldCoroutine);
-                _shieldCoroutine = StartCoroutine(ShieldExpired(powerup.GetDuration()));
-                break;
-            default:
-                Debug.Log("Unknown powerup");
-                break;
+            i = Random.Range(0, _playerHurt.Length);
         }
+        _playerHurt[i].SetActive(true);
     }
+
+    public void ActivateTripleShotSequence(float duration)
+    {
+        CheckCoroutine(_tripleShotCoroutine);
+        _tripleShotCoroutine = StartCoroutine(TripleShot(duration));
+    }
+    public void ActivateSpeedSequence(float duration)
+    {
+        CheckCoroutine(_speedPowerCoroutine);
+        _speedPowerCoroutine = StartCoroutine(SpeedBoost(duration));
+    }
+    public void ActivateShieldSequence(float duration)
+    {
+        CheckCoroutine(_shieldCoroutine);
+        _shieldCoroutine = StartCoroutine(Shield(duration));
+    }
+
     private void CheckCoroutine(Coroutine coroutine)
     {
         if (coroutine != null)
@@ -207,7 +248,7 @@ public class Player : MonoBehaviour
         _uIManager.UpdateScore(_score);
     }
 
-    IEnumerator TripleShotExpired(float duration)
+    IEnumerator TripleShot(float duration)
     {
         Debug.Log("Triple Shot Enabled");
         _tripleShotActive = true;
@@ -217,7 +258,7 @@ public class Player : MonoBehaviour
         Debug.Log("Triple Shot Disabled");
     }
 
-    IEnumerator SpeedExpired(float duration)
+    IEnumerator SpeedBoost(float duration)
     {
         Debug.Log("Speed Enabled");
         _speedPowerActive = true;
@@ -227,9 +268,11 @@ public class Player : MonoBehaviour
         Debug.Log("Speed Disabled");
     }
 
-    IEnumerator ShieldExpired(float duration)
+    IEnumerator Shield(float duration)
     {
         Debug.Log("Shield Enabled");
+        _shieldHitsLeft = _shieldHits;
+        SetShieldOpacity(1f);
         _shieldActive = true;
         _playerShield.SetActive(true);
         yield return new WaitForSeconds(duration);
