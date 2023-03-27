@@ -150,6 +150,8 @@ MonoBehaviour:
   _speed: 3
   _powerUpName: 2
   _powerUpDuration: 5
+  _powerUpAmount: 5
+  _weight: 40
 --- !u!95 &8281829107082727839
 Animator:
   serializedVersion: 4

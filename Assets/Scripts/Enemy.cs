@@ -86,6 +86,7 @@ public class Enemy : MonoBehaviour
 
     public void DestroyEnemy()
     {
+        transform.tag = "Dead";
         _keepFiring = false;
         _animator.SetTrigger("Dead");
         gameObject.GetComponent<BoxCollider2D>().enabled = false;
@@ -101,15 +102,9 @@ public class Enemy : MonoBehaviour
             yield return new WaitForSeconds(Random.Range(1,3));
             if (_keepFiring)
             {
-                GameObject laser = Instantiate(_laser, _laserSpawnPoint.transform.position, Quaternion.identity, _laserParent.transform);
+                Instantiate(_laser, _laserSpawnPoint.transform.position, Quaternion.identity, _laserParent.transform);
                 _laserSound.Play();
                 Debug.Log("Enemy Firing Laser");
-                laser.transform.SetPositionAndRotation(laser.transform.position, 
-                    Quaternion.AngleAxis(
-                        (Mathf.Atan2(
-                            (laser.transform.position.y - _player.transform.position.y), 
-                            (laser.transform.position.x - _player.transform.position.x)) * Mathf.Rad2Deg) + 90f, 
-                        Vector3.forward));
             }
         }
     }

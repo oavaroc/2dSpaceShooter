@@ -15,13 +15,22 @@ public class SpawnManager : MonoBehaviour
     private GameObject _enemyParent;
 
     [SerializeField]
-    private List<GameObject> _powerUpList;
+    private List<Powerup> _powerUpList;
     [SerializeField]
     private GameObject _powerUpParent;
 
     [SerializeField]
     private bool _keepSpawning=true;
 
+    private int _sumOfWeights=0;
+
+    private void Start()
+    {
+        foreach(Powerup powerup in _powerUpList)
+        {
+            _sumOfWeights += powerup.GetWeight();
+        }
+    }
 
     public void StartSpawning()
     {
@@ -43,10 +52,26 @@ public class SpawnManager : MonoBehaviour
         yield return new WaitForSeconds(_powerUpSpawnRate);
         while (_keepSpawning)
         {
-            Instantiate(_powerUpList[Random.Range(0,_powerUpList.Count)], new Vector3(Random.Range(-10f, 10f), 9, 0), 
+            Instantiate(GetWeightedRandomPowerup(), new Vector3(Random.Range(-10f, 10f), 9, 0), 
                         Quaternion.identity, _powerUpParent.transform);
             yield return new WaitForSeconds(Random.Range(_powerUpSpawnRate * 0.5f, _powerUpSpawnRate * 1.5f));
         }
+    }
+
+    private GameObject GetWeightedRandomPowerup()
+    {
+        int cumulativeWeight = 0;
+        int randomVal = Random.Range(0, _sumOfWeights);
+        foreach (Powerup powerup in _powerUpList)
+        {
+            cumulativeWeight += powerup.GetWeight();
+            if(cumulativeWeight > randomVal)
+            {
+                return powerup.gameObject;
+            }
+        }
+        Debug.Log("Power up not found in weighted calculation, sending element 0");
+        return _powerUpList[0].gameObject;
     }
 
     public void StopSpawning()

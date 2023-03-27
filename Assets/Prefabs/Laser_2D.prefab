@@ -100,6 +100,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
+  _homing: 0
+  _enemyLaser: 0
 --- !u!61 &2577823788713674113
 BoxCollider2D:
   m_ObjectHideFlags: 0

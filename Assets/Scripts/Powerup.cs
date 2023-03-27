@@ -9,7 +9,7 @@ public class Powerup : MonoBehaviour
 
     private enum PowerUpType
     {
-        TripleShotPowerup, SpeedPowerUp, ShieldPowerUp
+        TripleShotPowerup, SpeedPowerUp, ShieldPowerUp, AmmoPowerUp, HealthPowerUp, HomingPowerUp
     }
 
     [SerializeField]
@@ -17,13 +17,24 @@ public class Powerup : MonoBehaviour
 
     [SerializeField]
     private float _powerUpDuration = 5f;
+    [SerializeField]
+    private int _powerUpAmount = 5;
     private Player _player;
+    private AudioSource _powerUpSound;
+    [SerializeField]
+    private int _weight = 0;
+
     private void Start()
     {
         _player = GameObject.Find("Player").GetComponent<Player>();
         if(_player == null)
         {
             Debug.Log("Player is null in Power up object!");
+        }
+        _powerUpSound = GameObject.Find("PowerUpSound").GetComponent<AudioSource>();
+        if (_powerUpSound == null)
+        {
+            Debug.Log("Cannot find the PowerUpSound component");
         }
     }
     // Update is called once per frame
@@ -57,22 +68,29 @@ public class Powerup : MonoBehaviour
                         Debug.Log(_powerUpName.ToString() + " starting");
                         _player.ActivateShieldSequence(_powerUpDuration);
                         break;
+                    case "AmmoPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateAmmoSequence(_powerUpAmount);
+                        break;
+                    case "HealthPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateHealthSequence(_powerUpAmount);
+                        break;
+                    case "HomingPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateHomingSequence(_powerUpDuration);
+                        break;
                     default:
                         Debug.Log("Unknown powerup");
                         break;
                 }
-
+                _powerUpSound.Play();
                 Destroy(transform.gameObject);
             }
         }
     }
-
-    public float GetDuration()
+    public int GetWeight()
     {
-        return _powerUpDuration;
-    }
-    public string GetPowerUpName()
-    {
-        return _powerUpName.ToString();
+        return _weight;
     }
 }

@@ -4,14 +4,27 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [SerializeField]
+    private MainCamera _mainCamera;
 
     [SerializeField]
     private float _speed = 5f;
     [SerializeField]
     private float _thrusterSpeed = 10f;
+    [SerializeField]
+    private float _maxThruster = 100f;
+    [SerializeField]
+    private float _thrusterCounter = 100f;
+    [SerializeField]
+    private float _thrusterUsageRate = 2f;
+    [SerializeField]
+    private float _thrusterRechargeRate = 1f;
+    private bool _thrustersOverheated = false;
 
     [SerializeField]
     private float _shootCoolDown = 0.1f;
+    [SerializeField]
+    private int _ammoCount = 15;
     private float _lastShot = 0f;
 
     [SerializeField]
@@ -27,10 +40,14 @@ public class Player : MonoBehaviour
 
     private Coroutine _tripleShotCoroutine;
     private Coroutine _speedPowerCoroutine;
-    private Coroutine _shieldCoroutine;
+    private Coroutine _shieldCoroutine; 
+    private Coroutine _homingCoroutine;
 
     [SerializeField]
     private GameObject _tripleShot;
+    [SerializeField]
+    private GameObject _HomingShot;
+    private bool _homingActive;
 
     [SerializeField]
     private GameObject _playerShield;
@@ -45,6 +62,8 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private int _lives = 3;
+    [SerializeField]
+    private int _maxLives = 3;
     private UIManager _uIManager;
     private SpawnManager _spawnManager;
 
@@ -52,13 +71,13 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     private GameObject[] _playerHurt;
+    private Queue<GameObject> _playerHurtActive = new Queue<GameObject>();
 
     [SerializeField]
     private GameObject _explosion;
 
     private AudioSource _laserSound;
     private AudioSource _explosionSound;
-    private AudioSource _powerUpSound;
 
     // Start is called before the first frame update
     void Start()
@@ -74,6 +93,8 @@ public class Player : MonoBehaviour
         {
             _uIManager.UpdateLives(_lives);
             _uIManager.UpdateScore(_score);
+            _uIManager.UpdateAmmo(_ammoCount);
+            _uIManager.UpdateThrustersDisplay(_thrusterCounter,_maxThruster, _thrustersOverheated);
         }
 
         _spawnManager = GameObject.Find("SpawnManager").GetComponent<SpawnManager>();
@@ -94,11 +115,6 @@ public class Player : MonoBehaviour
             Debug.Log("Cannot find the ExplosionSound component");
         }
 
-        _powerUpSound = GameObject.Find("PowerUpSound").GetComponent<AudioSource>();
-        if (_powerUpSound == null)
-        {
-            Debug.Log("Cannot find the PowerUpSound component");
-        }
     }
 
     // Update is called once per frame
@@ -111,31 +127,62 @@ public class Player : MonoBehaviour
 
     private void Shoot()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _lastShot+_shootCoolDown)
+        if (Input.GetKeyDown(KeyCode.Space) && Time.time > _lastShot+_shootCoolDown && _ammoCount >= 1)
         {
-            Instantiate(_tripleShotActive ? _tripleShot : _laser, 
+            Instantiate(CalculateShot(), 
                         _laserSpawnPos.transform.position, Quaternion.identity, _laserParent.transform);
             _laserSound.Play();
             _lastShot = Time.time;
         }
     }
 
+    private GameObject CalculateShot()
+    {
+        _uIManager.UpdateAmmo(--_ammoCount);
+        if (_homingActive) { 
+            return _HomingShot; 
+        }
+        if (_tripleShotActive) { 
+            return _tripleShot; 
+        }
+        return _laser;
+    }
+
     //Move the player
     private void Move()
     {
-        if (Input.GetKey(KeyCode.LeftShift))
+        if (Input.GetKey(KeyCode.LeftShift) && _thrusterCounter > 0 && !_thrustersOverheated)
         {
             CalculateMovement(_thrusterSpeed);
+            UseThrusters();
         }
         else
         {
             CalculateMovement(_speed);
+            RegenerateThrusters();
         }    
         transform.position = new Vector3(Mathf.Abs(transform.position.x) > 10 ? Mathf.Clamp(transform.position.x * -1, -10f, 10f) : transform.position.x , 
                                             Mathf.Clamp(transform.position.y, -4, 2), 
                                             0);
     }
-
+    private void UseThrusters()
+    {
+        _thrusterCounter = Mathf.Clamp(_thrusterCounter - ( _thrusterUsageRate * Time.deltaTime), 0, _maxThruster);
+        if (_thrusterCounter <= 10f)
+        {
+            _thrustersOverheated = true;
+        }
+        _uIManager.UpdateThrustersDisplay(_thrusterCounter,_maxThruster, _thrustersOverheated);
+    }
+    private void RegenerateThrusters()
+    {
+        _thrusterCounter = Mathf.Clamp(_thrusterCounter + ( _thrusterRechargeRate * Time.deltaTime), 0,  _maxThruster);
+        if(_thrusterCounter > _maxThruster*0.75f)
+        {
+            _thrustersOverheated = false;
+        }
+        _uIManager.UpdateThrustersDisplay(_thrusterCounter,_maxThruster, _thrustersOverheated);
+    }
     private void CalculateMovement(float chosenSpeed)
     {
         transform.Translate(new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0) 
@@ -144,14 +191,15 @@ public class Player : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        Debug.Log("Player hit by: " + other.transform.name);
         if (other.CompareTag("Enemy"))
         {
+            Debug.Log("Player hit by: " + other.transform.name);
             other.GetComponent<Enemy>().DestroyEnemy();
             CalculateDamage();
         }
         else if (other.CompareTag("EnemyLaser"))
         {
+            Debug.Log("Player hit by: " + other.transform.name);
             Destroy(other.gameObject);
             CalculateDamage();
         }
@@ -166,6 +214,7 @@ public class Player : MonoBehaviour
         }
         else
         {
+            StartCoroutine(_mainCamera.ShakeCamera(0.1f, 0.05f));
             Damage();
         }
     }
@@ -216,8 +265,39 @@ public class Player : MonoBehaviour
             i = Random.Range(0, _playerHurt.Length);
         }
         _playerHurt[i].SetActive(true);
+        _playerHurtActive.Enqueue(_playerHurt[i]);
     }
 
+    private void RemoveVisualDamage(int health)
+    {
+        for (int i = 0; i < health; i++)
+        {
+            if (_playerHurtActive.TryDequeue(out GameObject _playerHurtObj))
+            {
+                _playerHurtObj.SetActive(false);
+            }
+        }
+    }
+    public void ActivateHomingSequence(float duration)
+    {
+        CheckCoroutine(_homingCoroutine);
+        _homingCoroutine = StartCoroutine(Homing(duration));
+    }
+    public void ActivateHealthSequence(int health)
+    {
+        if (_lives < _maxLives)
+        {
+            _lives += health;
+            _lives = Mathf.Min(_lives + health, _maxLives);
+            _uIManager.UpdateLives(_lives);
+            RemoveVisualDamage(health);
+        }
+    }
+    public void ActivateAmmoSequence(int ammo)
+    {
+        _ammoCount += ammo;
+        _uIManager.UpdateAmmo(_ammoCount);
+    }
     public void ActivateTripleShotSequence(float duration)
     {
         CheckCoroutine(_tripleShotCoroutine);
@@ -246,6 +326,15 @@ public class Player : MonoBehaviour
     {
         _score += score;
         _uIManager.UpdateScore(_score);
+    }
+    IEnumerator Homing(float duration)
+    {
+        Debug.Log("Homing Enabled");
+        _homingActive = true;
+        yield return new WaitForSeconds(duration);
+        _homingCoroutine = null;
+        _homingActive = false;
+        Debug.Log("Homing Disabled");
     }
 
     IEnumerator TripleShot(float duration)
