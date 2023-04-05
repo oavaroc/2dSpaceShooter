@@ -124,7 +124,7 @@ MonoBehaviour:
   _powerUpName: 4
   _powerUpDuration: 5
   _powerUpAmount: 5
-  _weight: 20
+  _weight: 50
 --- !u!61 &7653178173359084430
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -138,7 +138,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.00000011920929, y: 0.45169127}
+  m_Offset: {x: -0.03568268, y: 0.11270821}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -149,7 +149,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1.386018, y: 2.8113554}
+  m_Size: {x: 3.384235, y: 5.1307135}
   m_EdgeRadius: 0
 --- !u!50 &109046332603633206
 Rigidbody2D:

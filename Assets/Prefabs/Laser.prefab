@@ -113,7 +113,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 10
-  homing: 0
+  _homing: 0
+  _enemyLaser: 0
+  _raycastRange: 0
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!54 &-7801033063092012868
 Rigidbody:
   m_ObjectHideFlags: 0

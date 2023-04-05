@@ -9,11 +9,14 @@ TagManager:
   - Asteroid
   - EnemyLaser
   - Dead
+  - EnemyBeam
+  - PlayerBeam
+  - Illusion
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - EnemyEvasive
   - Water
   - UI
   - PostProcessing

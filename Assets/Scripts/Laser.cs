@@ -14,11 +14,15 @@ public class Laser : MonoBehaviour
 
     private GameObject _enemyParent;
     private GameObject target;
-    
 
+    [SerializeField]
+    private float _raycastRange;
+
+    [SerializeField]
+    private LayerMask layerMask;
     private void Start()
     {
-        if (_enemyLaser)
+        if (_enemyLaser&& _homing)
         {
             _player = GameObject.Find("Player");
             if (_player == null)
@@ -27,7 +31,7 @@ public class Laser : MonoBehaviour
             }
             AngleTowardsTargetPosition(_player);
         }
-        if (_homing)
+        if (!_enemyLaser&& _homing)
         {
             _enemyParent = GameObject.Find("Enemies");
         }
@@ -37,11 +41,44 @@ public class Laser : MonoBehaviour
     void Update()
     {
         Move();
+        if (!_enemyLaser)
+        {
+            WarnEvasiveEnemy();
+
+        }
+    }
+
+    private void WarnEvasiveEnemy()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _raycastRange, layerMask);
+        Debug.DrawRay(transform.position,transform.up);
+
+        if(hit.collider != null)
+        {
+            Debug.Log(hit.collider.tag);
+            if (hit.collider.CompareTag("Enemy"))
+            {
+                Debug.Log("Incoming Laser!");
+                Enemy enemy = hit.collider.GetComponent<Enemy>();
+                if (enemy != null)
+                {
+                    //Tell the enemy to move towards the perpendicular vector to avoid the laser
+                    Vector3 laserDirection = new Vector3(hit.point.x,hit.point.y) - transform.position;
+                    Vector3 moveTo = hit.collider.transform.position - new Vector3(-laserDirection.y, laserDirection.x, 0);
+                    enemy.EvasiveManeuvers(moveTo);
+                }
+                else
+                {
+                    Debug.Log("Enemy not found for evasive maneuver");
+                }
+            }
+
+        }
     }
 
     private void Move()
     {
-        if (_homing)
+        if (!_enemyLaser && _homing)
         {
             if ((target==null || target.CompareTag("Dead") ) && _enemyParent.transform.childCount>0)
             {
@@ -79,10 +116,23 @@ public class Laser : MonoBehaviour
     }
     private void RegularMovement()
     {
-        transform.Translate(Vector3.up * _speed * Time.deltaTime);
-        if(Mathf.Abs(transform.position.y) > 7 || Mathf.Abs(transform.position.x) > 11)
+        if (_enemyLaser&&!_homing)
         {
-            Destroy(gameObject);
+            transform.Translate(Vector3.down * _speed * Time.deltaTime);
+            if (Mathf.Abs(transform.position.y) > 7 || Mathf.Abs(transform.position.x) > 11)
+            {
+                Destroy(gameObject);
+            }
+
+        }
+        else
+        {
+            transform.Translate(Vector3.up * _speed * Time.deltaTime);
+            if(Mathf.Abs(transform.position.y) > 7 || Mathf.Abs(transform.position.x) > 11)
+            {
+                Destroy(gameObject);
+            }
+
         }
 
     }

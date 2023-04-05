@@ -9,7 +9,7 @@ public class Powerup : MonoBehaviour
 
     private enum PowerUpType
     {
-        TripleShotPowerup, SpeedPowerUp, ShieldPowerUp, AmmoPowerUp, HealthPowerUp, HomingPowerUp
+        TripleShotPowerup, SpeedPowerUp, ShieldPowerUp, AmmoPowerUp, HealthPowerUp, HomingPowerUp, SlowNPowerUp, BeamPowerUp
     }
 
     [SerializeField]
@@ -45,7 +45,24 @@ public class Powerup : MonoBehaviour
 
     void Move()
     {
-        transform.Translate(Vector3.down * _speed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.C))
+        {
+            MoveTowardPlayer();
+        }
+        else
+        {
+            transform.Translate( Vector3.down * _speed * Time.deltaTime);
+        }
+        
+        if (transform.position.y < -6)
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private void MoveTowardPlayer()
+    {
+        transform.position = Vector3.MoveTowards(transform.position, _player.transform.position, _speed * Time.deltaTime);
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -80,6 +97,14 @@ public class Powerup : MonoBehaviour
                         Debug.Log(_powerUpName.ToString() + " starting");
                         _player.ActivateHomingSequence(_powerUpDuration);
                         break;
+                    case "SlowNPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateSlowSequence(_powerUpDuration);
+                        break;
+                    case "BeamPowerUp":
+                        Debug.Log(_powerUpName.ToString() + " starting");
+                        _player.ActivateBeamSequence(_powerUpDuration);
+                        break;
                     default:
                         Debug.Log("Unknown powerup");
                         break;
@@ -87,6 +112,11 @@ public class Powerup : MonoBehaviour
                 _powerUpSound.Play();
                 Destroy(transform.gameObject);
             }
+        }
+        if (other.CompareTag("EnemyLaser"))
+        {
+            Destroy(other.gameObject);
+            Destroy(transform.gameObject);
         }
     }
     public int GetWeight()

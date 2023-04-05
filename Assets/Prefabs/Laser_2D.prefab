@@ -102,6 +102,10 @@ MonoBehaviour:
   _speed: 10
   _homing: 0
   _enemyLaser: 0
+  _raycastRange: 17.44
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!61 &2577823788713674113
 BoxCollider2D:
   m_ObjectHideFlags: 0

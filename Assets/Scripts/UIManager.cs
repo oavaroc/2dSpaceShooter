@@ -17,6 +17,7 @@ public class UIManager : MonoBehaviour
     private TMP_Text _thrusterText;
 
     private TMP_Text _scoreText;
+    private TMP_Text _waveCounterText;
 
     [SerializeField]
     private TMP_Text _gameOverText;
@@ -32,6 +33,12 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TMP_Text _outOfAmmoText;
     private Coroutine _ammoCoroutine;
+    [SerializeField]
+    private Animator _waveAnimator;
+    [SerializeField]
+    private Animator _bossHealthAnimator;
+    [SerializeField]
+    private Slider _bossHealth;
 
     // Start is called before the first frame update
     void Start()
@@ -54,14 +61,37 @@ public class UIManager : MonoBehaviour
         {
             Debug.Log("Cannot find AmmoCount component!");
         }
+        _waveCounterText = GameObject.Find("WaveCounter").GetComponent<TMP_Text>();
+        if (_waveCounterText == null)
+        {
+            Debug.Log("Cannot find WaveCounter component!");
+        }
+    }
 
+    public void StartWave(string wave)
+    {
+        _waveAnimator.SetTrigger("NewWave");
+        _waveCounterText.text = wave;
+
+    }
+    public void ActivateBossHealthBar()
+    {
+        _bossHealthAnimator.SetTrigger("BossActive");
+    }
+    public void UpdateBossHealth(float health)
+    {
+        _bossHealth.value = health;
+        if(health <= 0)
+        {
+            _bossHealth.gameObject.SetActive(false);
+        }
     }
 
     public void UpdateScore(int score)
     {
         _scoreText.text = "Score: " + score;
     }
-    public void UpdateAmmo(int ammo)
+    public void UpdateAmmo(int ammo, int ammoMax)
     {
         if(_ammoCoroutine != null && ammo > 0)
         {
@@ -69,7 +99,7 @@ public class UIManager : MonoBehaviour
             _outOfAmmo = false;
             _ammoCoroutine = null;
         }
-        _ammoText.text = "Ammo: " + ammo;
+        _ammoText.text = "Ammo: " + ammo + " / " +ammoMax;
         if(ammo <= 0)
         {
             _outOfAmmo = true;
