@@ -39,6 +39,8 @@ public class UIManager : MonoBehaviour
     private Animator _bossHealthAnimator;
     [SerializeField]
     private Slider _bossHealth;
+    [SerializeField]
+    private TMP_Text _endlessModeText;
 
     // Start is called before the first frame update
     void Start()
@@ -68,6 +70,11 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void EndlessModeTextActive()
+    {
+        _endlessModeText.gameObject.SetActive(true);
+
+    }
     public void StartWave(string wave)
     {
         _waveAnimator.SetTrigger("NewWave");

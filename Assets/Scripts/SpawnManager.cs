@@ -28,6 +28,7 @@ public class SpawnManager : MonoBehaviour
     private int _sumOfWeightsPU=0;
     private int _sumOfWeightsE = 0;
 
+    [SerializeField]
     private int _waveCounter = 1;
     private UIManager _uIManager;
 
@@ -53,8 +54,10 @@ public class SpawnManager : MonoBehaviour
 
     public void StartSpawning()
     {
+        _keepSpawning = true;
         StartCoroutine(StartWave());
     }
+
 
     IEnumerator StartWave()
     {
@@ -65,10 +68,15 @@ public class SpawnManager : MonoBehaviour
 
                 _uIManager.StartWave("Boss Wave");
                 Instantiate(_boss, new Vector3(0, 3, 0), Quaternion.identity, _enemyParent.transform);
-                StartCoroutine(SpawnPowerups(_waveCounter * 2));
+                StartCoroutine(SpawnPowerups(100));
+                if (_waveCounter == 5)
+                {
+                    _keepSpawning = false;
+
+                }
                 _waveCounter++;
             }
-            else if (_waveCounter % 10 > 0 && _stillSpawningPowerups == false && _stillSpawningEnemies == false && _enemyParent.transform.childCount ==0 && _powerUpParent.transform.childCount == 0)
+            else if (_waveCounter % 5 > 0 && _stillSpawningPowerups == false && _stillSpawningEnemies == false && _enemyParent.transform.childCount ==0 && _powerUpParent.transform.childCount == 0)
             {
                 _uIManager.StartWave("Wave " + _waveCounter);
                 StartCoroutine(SpawnEnemies(_waveCounter * 2));
@@ -76,6 +84,14 @@ public class SpawnManager : MonoBehaviour
                 _waveCounter++;
             }
             Debug.Log("Waiting for the player to finish the wave");
+            yield return new WaitForSeconds(1);
+        }
+        while (_keepSpawning==false)
+        {
+            if(_enemyParent.transform.childCount == 0 && _powerUpParent.transform.childCount == 0)
+            {
+                _uIManager.EndlessModeTextActive();
+            }
             yield return new WaitForSeconds(1);
         }
     }
@@ -102,12 +118,16 @@ public class SpawnManager : MonoBehaviour
         Instantiate(_powerUpList[1], new Vector3(Random.Range(-10f, 10f), 9, 0),
                     Quaternion.identity, _powerUpParent.transform);
         yield return new WaitForSeconds(5);
-        while (_keepSpawning && powerUpsLeft>0)
+        while (powerUpsLeft>0)
         {
             Instantiate(GetWeightedRandomPowerup(), new Vector3(Random.Range(-10f, 10f), 9, 0), 
                         Quaternion.identity, _powerUpParent.transform);
             powerUpsLeft--;
             yield return new WaitForSeconds(Random.Range(_powerUpSpawnRate * 0.5f, _powerUpSpawnRate * 1.5f));
+            if(_stillSpawningEnemies == false && _enemyParent!= null && _enemyParent.transform.childCount == 0)
+            {
+                break;
+            }
         }
         _stillSpawningPowerups = false;
     }

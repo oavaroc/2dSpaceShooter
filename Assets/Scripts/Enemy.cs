@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour
@@ -107,7 +108,7 @@ public class Enemy : MonoBehaviour
         {
             Debug.Log("Cannot find collider component");
         }
-        if (Random.Range(0, 10f) <= 1 && !_isBoss && !_aggressive)
+        if (Random.Range(0, 10f) <= 1 && !_isBoss && !_aggressive && !CompareTag("Illusion"))
         {
             _shieldActive = true;
         }
@@ -168,6 +169,19 @@ public class Enemy : MonoBehaviour
         while (_keepFiring)
         {
             yield return new WaitForSeconds(10f);
+            if(_enemyParent.transform.childCount > 1)
+            {
+                _enemyHealth = Mathf.Clamp(_enemyHealth+ _enemyParent.transform.childCount - 1,0,_enemyHealthMax);
+                _uIManager.UpdateBossHealth(_enemyHealth / (float)_enemyHealthMax);
+                foreach (Enemy enemy in _enemyParent.GetComponentsInChildren<Enemy>())
+                {
+                    if (enemy.CompareTag("Illusion"))
+                    {
+                        enemy.DestroyEnemy();
+                    }
+                }
+
+            }
             int bossPlacement = Random.Range(0, _bossTeleportLocations.Length);
             foreach(Transform location in _bossTeleportLocations)
             {
@@ -285,7 +299,11 @@ public class Enemy : MonoBehaviour
                 foreach (Enemy enemy in _enemyParent.GetComponentsInChildren<Enemy>())
                 {
                     if (enemy.CompareTag("Illusion"))
+                    {
                         enemy.DestroyEnemy();
+                        Debug.Log("Destroying illusion: " + enemy.name);
+
+                    }
                 }
             }
         }
@@ -306,6 +324,7 @@ public class Enemy : MonoBehaviour
         if (_shieldActive)
         {
             _shieldHitsLeft--;
+            Debug.Log("Removing 1 shield hit from enemy");
             if (_shieldHitsLeft <= 0)
             {
                 _shieldActive = false;
@@ -321,16 +340,17 @@ public class Enemy : MonoBehaviour
             }
             if (CompareTag("Illusion"))
             {
-                transform.tag = "Dead";
+                Debug.Log("Destroying illusion: " + gameObject.name);
                 _keepFiring = false;
                 _animator.SetTrigger("Hit");
                 _collider.enabled = false;
                 _speed = 0f;
-                Destroy(this.gameObject, 0.4f);
+                Destroy(gameObject, 0.4f);
 
             }
             else
             {
+                Debug.Log("Destroying enemy: " + gameObject.name);
                 _player.AddScore(_scoreWorth);
                 transform.tag = "Dead";
                 _keepFiring = false;
@@ -338,7 +358,7 @@ public class Enemy : MonoBehaviour
                 _collider.enabled = false;
                 _speed = 0f;
                 _explosionSound.Play();
-                Destroy(this.gameObject, 2.38f);
+                Destroy(gameObject, 2.38f);
 
             }
 

@@ -110,7 +110,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 9f5f7672aa52a3b4192bb9f3896d9cbc, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8915094, g: 1, b: 0.98767155, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -139,6 +139,7 @@ MonoBehaviour:
   _zigzag: 0
   _scoreWorth: 0
   _enemyHealth: 1
+  _enemyHealthMax: 1
   _explosionSound: {fileID: 0}
   _laserSound: {fileID: 0}
   _laser: {fileID: 201381884119645724, guid: 0879a0a5bc4ae0b4b9ae414d8a5c67d9, type: 3}

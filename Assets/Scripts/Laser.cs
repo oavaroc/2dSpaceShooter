@@ -80,7 +80,7 @@ public class Laser : MonoBehaviour
     {
         if (!_enemyLaser && _homing)
         {
-            if ((target==null || target.CompareTag("Dead") ) && _enemyParent.transform.childCount>0)
+            if ((target==null || target.CompareTag("Dead") ) && _enemyParent != null && _enemyParent.transform.childCount>0)
             {
                 target = FindClosestTarget();
             }
