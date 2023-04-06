@@ -253,7 +253,7 @@ MonoBehaviour:
   _laserSpawnPoint: {fileID: 2497449928452176620}
   _beamEnemy: 0
   _beam: {fileID: 0}
-  _weight: 0
+  _weight: 20
   _shieldActive: 0
   _enemyShield: {fileID: 7533833765798185532}
   _shieldHits: 1
