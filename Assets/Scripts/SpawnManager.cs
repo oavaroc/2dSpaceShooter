@@ -115,8 +115,8 @@ public class SpawnManager : MonoBehaviour
         Instantiate(_powerUpList[0], new Vector3(Random.Range(-10f, 10f), 9, 0),
                     Quaternion.identity, _powerUpParent.transform);
         //spawn 1 health powerup at the start of each wave
-        Instantiate(_powerUpList[1], new Vector3(Random.Range(-10f, 10f), 9, 0),
-                    Quaternion.identity, _powerUpParent.transform);
+        //Instantiate(_powerUpList[1], new Vector3(Random.Range(-10f, 10f), 9, 0),
+        //            Quaternion.identity, _powerUpParent.transform);
         yield return new WaitForSeconds(5);
         while (powerUpsLeft>0)
         {

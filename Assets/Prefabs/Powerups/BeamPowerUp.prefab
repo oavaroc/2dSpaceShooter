@@ -103,7 +103,7 @@ MonoBehaviour:
   _powerUpName: 7
   _powerUpDuration: 5
   _powerUpAmount: 5
-  _weight: 70
+  _weight: 50
 --- !u!61 &3739970102048339739
 BoxCollider2D:
   m_ObjectHideFlags: 0

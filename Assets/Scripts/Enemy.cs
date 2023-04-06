@@ -407,10 +407,11 @@ public class Enemy : MonoBehaviour
                 if (_beamEnemy)
                 {
                     yield return new WaitForSeconds(1);
-                    _beam.gameObject.SetActive(true);
+                    if(_keepFiring)
+                        _beam.gameObject.SetActive(true);
                     yield return new WaitForSeconds(1);
                     _beam.gameObject.SetActive(false);
-                    yield return new WaitForSeconds(1);//inc52233705
+                    yield return new WaitForSeconds(1);
 
                 }
                 else
