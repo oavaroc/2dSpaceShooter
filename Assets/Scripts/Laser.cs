@@ -13,13 +13,13 @@ public class Laser : MonoBehaviour
     private GameObject _player;
 
     private GameObject _enemyParent;
-    private GameObject target;
+    private GameObject _target;
 
     [SerializeField]
     private float _raycastRange;
 
     [SerializeField]
-    private LayerMask layerMask;
+    private LayerMask _layerMask;
     private void Start()
     {
         if (_enemyLaser&& _homing)
@@ -50,7 +50,7 @@ public class Laser : MonoBehaviour
 
     private void WarnEvasiveEnemy()
     {
-        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _raycastRange, layerMask);
+        RaycastHit2D hit = Physics2D.Raycast(transform.position, transform.up, _raycastRange, _layerMask);
         Debug.DrawRay(transform.position,transform.up);
 
         if(hit.collider != null)
@@ -80,13 +80,13 @@ public class Laser : MonoBehaviour
     {
         if (!_enemyLaser && _homing)
         {
-            if ((target==null || target.CompareTag("Dead") ) && _enemyParent != null && _enemyParent.transform.childCount>0)
+            if ((_target==null || _target.CompareTag("Dead") ) && _enemyParent != null && _enemyParent.transform.childCount>0)
             {
-                target = FindClosestTarget();
+                _target = FindClosestTarget();
             }
-            if (target != null)
+            if (_target != null)
             {
-                HomingRotation(target);
+                HomingRotation(_target);
             }
             else
             {
